@@ -246,8 +246,8 @@ size_group
 # stage 3 graph
 ax1 = size_group.plot(title = "Code Size by Year, Month")
 ax1.legend(["size"])
-ax.set_xlabel("year, month")
-ax.set_ylabel("code size")
+ax1.set_xlabel("year, month")
+ax1.set_ylabel("code size")
 
 
 # In[76]:
