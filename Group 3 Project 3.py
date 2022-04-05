@@ -142,16 +142,16 @@ for commit in commits:
     commit_array.append(commit.sha[0:6])
     
     ##add the commiter into the array
-    #commit_committer_array.append(commit.commit.author.name)
+    commit_committer_array.append(commit.commit.author.name)
     
     ##add the date of commit into the array
     commit_date_array.append(str(commit.commit.author.date))
     
     ##add the tree of commit into the array
-    #commit_tree_array.append(commit.commit.tree.sha[0:6])
+    commit_tree_array.append(commit.commit.tree.sha[0:6])
     
     ##add the url of the commit into the array
-    #commit_url_array.append(commit.commit.url)
+    commit_url_array.append(commit.commit.url)
 
 
 # In[31]:
@@ -160,10 +160,10 @@ for commit in commits:
 commits = pd.DataFrame()
 
 commits['commit'] = np.array(commit_array).tolist()
-#commits['committer'] = np.array(commit_committer_array).tolist()
+commits['committer'] = np.array(commit_committer_array).tolist()
 commits['date'] = np.array(commit_date_array).tolist()
-#commits['tree'] =  np.array(commit_tree_array).tolist()
-#commits['url'] = np.array(commit_url_array).tolist()
+commits['tree'] =  np.array(commit_tree_array).tolist()
+commits['url'] = np.array(commit_url_array).tolist()
 
 
 # In[43]:
