@@ -25,6 +25,7 @@ import datetime
 
 issues = repo.get_issues(state='all')
 
+# stage 1: issues
 title_array = []
 num_array = []
 state_array = []
