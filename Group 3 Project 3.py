@@ -236,8 +236,6 @@ codeSize
 codeSize.date = pd.to_datetime(codeSize.date)
 
 size_group = codeSize["size"].groupby([codeSize['date'].dt.year, codeSize['date'].dt.month]).agg({'sum'})
-issues_group = df["state"].groupby([df['created'].dt.year, df['created'].dt.month]).agg({'count'})
-
 
 # In[102]:
 
