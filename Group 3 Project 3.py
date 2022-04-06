@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[34]:
+# In[86]:
 
 
 from github import Github
@@ -11,13 +11,13 @@ import matplotlib.pyplot as plt
 g = Github("access_token")
 
 
-# In[35]:
+# In[87]:
 
 
 repo = g.get_repo("wesnoth/wesnoth")
 
 
-# In[36]:
+# In[130]:
 
 
 import numpy as np
@@ -25,7 +25,6 @@ import datetime
 
 issues = repo.get_issues(state='all')
 
-# stage 1: issues
 title_array = []
 num_array = []
 state_array = []
@@ -36,9 +35,9 @@ issue_assignees_array = []
 issue_comments_array = []
 issue_locked_array = []
 
-count = 0
+count_array = []
 for issue in issues:
-    count += 1
+    count_array.append(1)
     title_array.append(issue.title)
     num_array.append(issue.number)
     state_array.append(issue.state)
@@ -78,7 +77,7 @@ df['comments'] = np.array(issue_comments_array).tolist()
 df['locked'] = np.array(issue_locked_array).tolist()
 
 
-# In[38]:
+# In[131]:
 
 
 df.created = pd.to_datetime(df.created)
@@ -126,7 +125,7 @@ plt.ylabel("comment(s)")
 plt.show()
 
 
-# In[30]:
+# In[84]:
 
 
 ##Stage 2: Commits
@@ -155,7 +154,7 @@ for commit in commits:
     commit_url_array.append(commit.commit.url)
 
 
-# In[31]:
+# In[88]:
 
 
 commits = pd.DataFrame()
@@ -231,27 +230,32 @@ codeSize['path'] = np.array(path_array).tolist()
 codeSize
 
 
-# In[81]:
+# In[111]:
 
 
 codeSize.date = pd.to_datetime(codeSize.date)
 
 size_group = codeSize["size"].groupby([codeSize['date'].dt.year, codeSize['date'].dt.month]).agg({'sum'})
 issues_group = df["state"].groupby([df['created'].dt.year, df['created'].dt.month]).agg({'count'})
+
+
+# In[102]:
+
+
 size_group
 
 
-# In[82]:
+# In[104]:
 
 
 # stage 3 graph
 ax1 = size_group.plot(title = "Code Size by Year, Month")
 ax1.legend(["size"])
 ax1.set_xlabel("year, month")
-ax1.set_ylabel("code size")
+ax1.set_ylabel("size")
 
 
-# In[76]:
+# In[103]:
 
 
 ax2 = issues_group.plot(title = "Issues by Year, Month")
@@ -260,15 +264,54 @@ ax2.set_xlabel("year, month")
 ax2.set_ylabel("number of issues")
 
 
-# In[83]:
+# In[186]:
 
 
 # stage 4
-ax1 = size_group.plot(title = "Code Size VS Issues by Year, Month")
-ax2 = issues_group.plot(ax=ax1)
-ax2.legend(["code size", "issues"])
-ax2.set_xlabel("year, month")
-ax2.set_ylabel("number")
+codeSize = pd.DataFrame()
+
+codeSize['date'] = np.array(date_array).tolist()
+codeSize['size'] = np.array(code_size_array).tolist()
+codeSize.date = pd.to_datetime(codeSize.date)
+
+
+# In[193]:
+
+
+codeSize['norm_date'] = codeSize['date'].dt.normalize()
+
+
+# In[190]:
+
+
+issues = pd.DataFrame()
+
+issues['date'] = np.array(created_array).tolist()
+issues['count'] = np.array(count_array).tolist()
+issues['norm_date'] = issues['date'].dt.normalize()
+
+
+# In[213]:
+
+
+out = issues.merge(codeSize, on='norm_date', how='left')
+
+
+# In[211]:
+
+
+out['issue_density'] = out['count']/out['size']
+out
+issue_density = out['issue_density'].groupby([out['norm_date'].dt.year, out['norm_date'].dt.month]).agg({'sum'})
+
+
+# In[212]:
+
+
+ax1 = issue_density.plot(title = "Issues Density by Year, Month")
+ax1.legend(["issue density"])
+ax1.set_xlabel("year, month")
+ax1.set_ylabel("issue/code size")
 
 
 # In[ ]:
